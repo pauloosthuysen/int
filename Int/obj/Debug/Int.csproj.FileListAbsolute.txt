@@ -1,0 +1,5 @@
+c:\users\oosthph1\documents\visual studio 2010\Projects\Int\Int\bin\Int.dll
+c:\users\oosthph1\documents\visual studio 2010\Projects\Int\Int\bin\Int.pdb
+c:\users\oosthph1\documents\visual studio 2010\Projects\Int\Int\obj\Debug\ResolveAssemblyReference.cache
+c:\users\oosthph1\documents\visual studio 2010\Projects\Int\Int\obj\Debug\Int.dll
+c:\users\oosthph1\documents\visual studio 2010\Projects\Int\Int\obj\Debug\Int.pdb

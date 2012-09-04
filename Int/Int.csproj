@@ -54,6 +54,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\master.css" />
     <Content Include="DataAccess.edmx.sql" />
     <Content Include="Default.aspx" />
     <Content Include="Home.aspx" />

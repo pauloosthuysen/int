@@ -30,5 +30,16 @@ namespace Int
             }
         }
 
+        public static Product GetProduct(int productId)
+        {
+            using (var cont = new DataAccessContainer())
+            {
+                var product = (from p in cont.Products
+                                   where p.Id == productId
+                                   select p).FirstOrDefault();
+                return product;
+            }
+        }
+
     }
 }

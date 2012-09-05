@@ -28,5 +28,17 @@ namespace Int
         {
             return DataAccess.GetUser(username);
         }
+
+        [WebMethod]
+        public List<Product> GetProducts()
+        {
+            return DataAccess.GetProducts();
+        }
+
+        [WebMethod]
+        public Product GetProduct(int productId)
+        {
+            return DataAccess.GetProduct(productId);
+        }
     }
 }

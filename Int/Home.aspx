@@ -6,11 +6,13 @@
 
     !<br />
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
-        DataKeyNames="Id" DataSourceID="EntityDataSource1" 
-        onrowcommand="GridView1_RowCommand" onrowcreated="GridView1_RowCreated">
+        DataKeyNames="Id">
         <Columns>
-            <asp:BoundField DataField="Id" HeaderText="Id" ReadOnly="True" 
-                SortExpression="Id" />
+            <asp:TemplateField HeaderText="Add To Cart">
+                <ItemTemplate>
+                    <asp:CheckBox ID="AddToCart" runat="server" />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
             <asp:BoundField DataField="Description" HeaderText="Description" 
                 SortExpression="Description" />
@@ -26,17 +28,40 @@
                     </asp:ListBox>
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:ButtonField ButtonType="Button" CommandName="AddToCart" 
-                Text="Add to Cart" />
         </Columns>
     </asp:GridView>
+    <asp:Button ID="Button1" runat="server" onclick="Button1_Click" 
+        Text="Add to Cart" />
     <br />
+    <% if (Session["Cart"] != null)
+       { %>
+            <h2>Products in Cart</h2>
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>SubTotal</th>
+                </tr>
+                <% decimal totalAmount = 0;
+                   foreach (string s in (List<string>)Session["Cart"])
+                   {
+                       int pId = Int32.Parse(s.Split('|')[0]);
+                       int pQu = Int32.Parse(s.Split('|')[1]);
+                       Int.Product prod = ws.GetProduct(pId);
+                       totalAmount += prod.Price * pQu;
+                       %>
+                       <tr>
+                            <td><%= prod.Name %></td>
+                            <td><%= prod.Price %></td>
+                            <td><%= pQu %></td>
+                            <td style="text-align: right;"><%= prod.Price * pQu %></td>
+                       </tr>
+                <% } %>
+                <tr>
+                    <td colspan="4" style="text-align: right;font-weight: bold;">Total: <%= totalAmount %></td>
+                </tr>
+            </table>
+    <% } %>
     <br />
-    <asp:EntityDataSource ID="EntityDataSource1" runat="server" 
-        ConnectionString="name=DataAccessContainer" 
-        DefaultContainerName="DataAccessContainer" EnableFlattening="False" 
-        EntitySetName="Products">
-    </asp:EntityDataSource>
-    <br />
-
 </asp:Content>

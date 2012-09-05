@@ -41,5 +41,15 @@ namespace Int
             }
         }
 
+        public static List<Product> GetProducts()
+        {
+            using (var cont = new DataAccessContainer())
+            {
+                var products = (from p in cont.Products
+                               select p).ToList();
+                return products;
+            }
+        }
+
     }
 }

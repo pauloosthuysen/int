@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Int
 {
@@ -12,7 +13,8 @@ namespace Int
     {
 
         private User loggedInUser;
-        private IntWebService1 ws;
+        protected IntWebService1 ws;
+        protected List<Product> products;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -20,31 +22,62 @@ namespace Int
             {
                 Response.Redirect("Default.aspx");
             }
+            ws = new IntWebService1();
             if (!IsPostBack)
             {
-                ws = new IntWebService1();
                 loggedInUser = (User)Session["loggedInUser"];
                 lblUsername.Text = loggedInUser.Name;
+                products = ws.GetProducts();
+                GridView1.DataSource = products;
+                GridView1.DataBind();
             }
         }
 
-        protected void GridView1_RowCreated(object sender, GridViewRowEventArgs e)
+        protected void Button1_Click(object sender, EventArgs e)
         {
-            //if (e.Row.RowType == DataControlRowType.DataRow)
-            //{
-            //    LinkButton myBtn = (LinkButton)e.Row.Cells[4].Controls[0];
-            //    myBtn.CommandArgument = e.Row.RowIndex.ToString();
-            //}
-        }
-
-        protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "AddToCart")
+            var products = GridView1.Rows.Cast<GridViewRow>()
+                .Where(row => ((CheckBox)row.FindControl("AddToCart")).Checked)
+                .Select(row => GridView1.DataKeys[row.RowIndex].Value.ToString() + "|" + ((ListBox)row.FindControl("ListBox1")).SelectedValue).ToList();
+            if (Session["Cart"] == null)
             {
-                int rowId = Int32.Parse(e.CommandArgument.ToString());
-                GridView gv = (GridView)e.CommandSource;
-                int pId = Int32.Parse(gv.Rows[rowId].Cells[0].Text);
-                lblUsername.Text = pId.ToString() + "|" + ((ListBox)(gv.Rows[rowId].Cells[4].FindControl("ListBox1"))).SelectedValue;
+                Session["Cart"] = products;
+            }
+            else
+            {
+                var cart = (List<string>)Session["Cart"];
+                foreach (var product in products)
+                {
+                    int nId = Int32.Parse(product.Split('|')[0]);
+                    int nQu = Int32.Parse(product.Split('|')[1]);
+                    bool valueExisted = false;
+                    for(int i = 0; i < cart.Count; i++)
+                    {
+                        int cId = Int32.Parse(cart[i].Split('|')[0]);
+                        if(cId == nId){
+                            int cQu = Int32.Parse(cart[i].Split('|')[1]);
+                            cart[i] = cId + "|" + (cQu + nQu).ToString();
+                            valueExisted = true;
+                        }
+                    }
+                    if(!valueExisted) //if exist, add quantity
+                    {
+                        cart.Add(product);
+                    }
+                    Session["Cart"] = cart;
+                }
+            }
+            foreach (GridViewRow row in GridView1.Rows)
+            {
+                CheckBox cb = (CheckBox)row.FindControl("AddToCart");
+                ListBox lb = (ListBox)row.FindControl("ListBox1");
+                if (cb.Checked)
+                {
+                    cb.Checked = false;
+                }
+                if (lb.SelectedValue != "1")
+                {
+                    lb.SelectedValue = "1";
+                }
             }
         }
     }

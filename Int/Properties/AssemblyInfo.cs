@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Int")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Telkom SA")]
+[assembly: AssemblyCompany("Paul Oosthuysen")]
 [assembly: AssemblyProduct("Int")]
-[assembly: AssemblyCopyright("Copyright © Telkom SA 2012")]
+[assembly: AssemblyCopyright("Copyright © Paul Oosthuysen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

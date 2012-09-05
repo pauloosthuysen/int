@@ -36,32 +36,15 @@
     <% if (Session["Cart"] != null)
        { %>
             <h2>Products in Cart</h2>
-            <table>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>SubTotal</th>
-                </tr>
-                <% decimal totalAmount = 0;
-                   foreach (string s in (List<string>)Session["Cart"])
-                   {
-                       int pId = Int32.Parse(s.Split('|')[0]);
-                       int pQu = Int32.Parse(s.Split('|')[1]);
-                       Int.Product prod = ws.GetProduct(pId);
-                       totalAmount += prod.Price * pQu;
-                       %>
-                       <tr>
-                            <td><%= prod.Name %></td>
-                            <td><%= prod.Price %></td>
-                            <td><%= pQu %></td>
-                            <td style="text-align: right;"><%= prod.Price * pQu %></td>
-                       </tr>
-                <% } %>
-                <tr>
-                    <td colspan="4" style="text-align: right;font-weight: bold;">Total: <%= totalAmount %></td>
-                </tr>
-            </table>
+            <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False">
+                <Columns>
+                    <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
+                    <asp:BoundField DataField="PriceAsString" HeaderText="Price" SortExpression="PriceAsString" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" SortExpression="Quantity" />
+                    <asp:BoundField DataField="SubTotalAsString" HeaderText="SubTotal" SortExpression="SubTotalAsString" />
+                </Columns>
+            </asp:GridView>
+            <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+            <asp:Button ID="btnCheckout" runat="server" Text="Checkout" />
     <% } %>
-    <br />
 </asp:Content>

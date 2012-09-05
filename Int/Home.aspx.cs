@@ -12,9 +12,7 @@ namespace Int
     public partial class Home : System.Web.UI.Page
     {
 
-        private User loggedInUser;
-        protected IntWebService1 ws;
-        protected List<Product> products;
+        private IntWebService1 ws;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,14 +20,36 @@ namespace Int
             {
                 Response.Redirect("Default.aspx");
             }
+
             ws = new IntWebService1();
             if (!IsPostBack)
             {
-                loggedInUser = (User)Session["loggedInUser"];
+                User loggedInUser = (User)Session["loggedInUser"];
                 lblUsername.Text = loggedInUser.Name;
-                products = ws.GetProducts();
-                GridView1.DataSource = products;
+                GridView1.DataSource = ws.GetProducts();
                 GridView1.DataBind();
+            }
+            ShowCartGrid();
+        }
+
+        private void ShowCartGrid()
+        {
+            if (Session["Cart"] != null)
+            {
+                List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
+                decimal cartItemsTotalAmount = 0;
+                foreach (var s in (List<string>)Session["Cart"])
+                {
+                    int pId = Int32.Parse(s.Split('|')[0]);
+                    int pQu = Int32.Parse(s.Split('|')[1]);
+                    Product prod = ws.GetProduct(pId);
+                    decimal subTotal = (prod.Price * pQu);
+                    cartItemsTotalAmount += subTotal;
+                    cartItems.Add(new ShoppingCartItem(prod.Name, prod.Price, pQu, subTotal));
+                }
+                GridView2.DataSource = cartItems;
+                GridView2.DataBind();
+                Label1.Text = cartItemsTotalAmount.ToString("C"); ;
             }
         }
 
@@ -79,6 +99,7 @@ namespace Int
                     lb.SelectedValue = "1";
                 }
             }
+            ShowCartGrid();
         }
     }
 }

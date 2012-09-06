@@ -55,17 +55,19 @@ namespace Int
 
         protected void Button1_Click(object sender, EventArgs e)
         {
+            //get selected order products & quantity from GridView
             var products = GridView1.Rows.Cast<GridViewRow>()
                 .Where(row => ((CheckBox)row.FindControl("AddToCart")).Checked)
                 .Select(row => GridView1.DataKeys[row.RowIndex].Value.ToString() + "|" + ((ListBox)row.FindControl("ListBox1")).SelectedValue).ToList();
-            if (Session["Cart"] == null)
+
+            if (Session["Cart"] == null) //if cart not exist, add GridView items
             {
-                Session["Cart"] = products;
+                Session["Cart"] = (products.Count > 0) ? products : null;
             }
-            else
+            else                        //else, add product & quantity to existing cart
             {
                 var cart = (List<string>)Session["Cart"];
-                foreach (var product in products)
+                foreach (var product in products) //if product exist in cart, only update quantity
                 {
                     int nId = Int32.Parse(product.Split('|')[0]);
                     int nQu = Int32.Parse(product.Split('|')[1]);
@@ -79,13 +81,15 @@ namespace Int
                             valueExisted = true;
                         }
                     }
-                    if(!valueExisted) //if exist, add quantity
+                    if(!valueExisted) //if product not exist in cart, add product & quantity from input
                     {
                         cart.Add(product);
                     }
                     Session["Cart"] = cart;
                 }
             }
+
+            //reset Checkboxes & Quantity fields
             foreach (GridViewRow row in GridView1.Rows)
             {
                 CheckBox cb = (CheckBox)row.FindControl("AddToCart");
@@ -100,6 +104,17 @@ namespace Int
                 }
             }
             ShowCartGrid();
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            //clear session vars
+            Session["isLoggedIn"] = null;
+            Session["Cart"] = null;
+            Session["loggedInUser"] = null;
+
+            //redirect
+            Response.Redirect("Default.aspx", true);
         }
     }
 }

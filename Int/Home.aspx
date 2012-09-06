@@ -1,5 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master.Master" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="Int.Home" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <script type="text/javascript">
+
+        function confirmLogout() {
+            return confirm("Are you sure you want to logout?");
+        }
+    
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     Welcome <asp:Label ID="lblUsername" runat="server" Text="Label"></asp:Label>
@@ -10,7 +17,7 @@
         <Columns>
             <asp:TemplateField HeaderText="Add To Cart">
                 <ItemTemplate>
-                    <asp:CheckBox ID="AddToCart" runat="server" />
+                    <div class="home_productSelect"><asp:CheckBox ID="AddToCart" runat="server" /></div>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
@@ -47,4 +54,7 @@
             <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
             <asp:Button ID="btnCheckout" runat="server" Text="Checkout" />
     <% } %>
+    <hr />
+    <asp:Button ID="btnLogout" runat="server" Text="Logout" 
+        onclientclick="return confirmLogout();" onclick="btnLogout_Click" />
 </asp:Content>

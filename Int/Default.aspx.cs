@@ -10,7 +10,7 @@ namespace Int
     public partial class Default : System.Web.UI.Page
     {
 
-        private IntWebService1 ws = new IntWebService1();
+        private IntWebService1 ws;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -18,6 +18,7 @@ namespace Int
             {
                 Response.Redirect("Home.aspx");
             }
+            ws = new IntWebService1();
         }
 
         protected void Login1_Authenticate(object sender, AuthenticateEventArgs e)

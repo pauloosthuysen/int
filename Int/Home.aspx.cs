@@ -12,6 +12,7 @@ namespace Int
     public partial class Home : System.Web.UI.Page
     {
 
+        private User loggedInUser;
         private IntWebService1 ws;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -22,9 +23,9 @@ namespace Int
             }
 
             ws = new IntWebService1();
+            loggedInUser = (User)Session["loggedInUser"];
             if (!IsPostBack)
             {
-                User loggedInUser = (User)Session["loggedInUser"];
                 lblUsername.Text = loggedInUser.Name;
                 GridView1.DataSource = ws.GetProducts();
                 GridView1.DataBind();
@@ -36,21 +37,34 @@ namespace Int
         {
             if (Session["Cart"] != null)
             {
-                List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
+                List<ShoppingCartItem> cartItems = GetCartItems();
                 decimal cartItemsTotalAmount = 0;
-                foreach (var s in (List<string>)Session["Cart"])
+                foreach (var s in cartItems)
                 {
-                    int pId = Int32.Parse(s.Split('|')[0]);
-                    int pQu = Int32.Parse(s.Split('|')[1]);
-                    Product prod = ws.GetProduct(pId);
-                    decimal subTotal = (prod.Price * pQu);
-                    cartItemsTotalAmount += subTotal;
-                    cartItems.Add(new ShoppingCartItem(prod.Name, prod.Price, pQu, subTotal));
+                    cartItemsTotalAmount += s.SubTotal;
                 }
                 GridView2.DataSource = cartItems;
                 GridView2.DataBind();
-                Label1.Text = cartItemsTotalAmount.ToString("C"); ;
+                Label1.Text = cartItemsTotalAmount.ToString("C");
+                if (cartItemsTotalAmount > 50)
+                {
+                    btnCheckout.Enabled = true;
+                }
             }
+        }
+
+        private List<ShoppingCartItem> GetCartItems()
+        {
+            List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
+            foreach (var s in (List<string>)Session["Cart"])
+            {
+                int pId = Int32.Parse(s.Split('|')[0]);
+                int pQu = Int32.Parse(s.Split('|')[1]);
+                Product prod = ws.GetProduct(pId);
+                decimal subTotal = (prod.Price * pQu);
+                cartItems.Add(new ShoppingCartItem(prod.Name, prod.Price, pQu, subTotal) { ProductId = prod.Id });
+            }
+            return cartItems;
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -115,6 +129,30 @@ namespace Int
 
             //redirect
             Response.Redirect("Default.aspx", true);
+        }
+
+        protected void btnClearCart_Click(object sender, EventArgs e)
+        {
+            Session["Cart"] = null;
+        }
+
+        protected void btnCheckout_Click(object sender, EventArgs e)
+        {
+            using (DataAccessContainer ctx = new DataAccessContainer())
+            {
+                DateTime now = DateTime.Now;
+                
+                Int.User usr = ctx.Users.FirstOrDefault(u => u.Id == loggedInUser.Id);
+                Invoice nInv = new Invoice() { Date = now, IsPaid = false };
+                Order nOrder = new Order() { Date = now, Invoice = nInv, Discount = 0 };
+                GetCartItems().ForEach(ci =>
+                {
+                    OrderProduct nOrderProd = new OrderProduct() { Quantity = ci.Quantity, Product = ctx.Products.FirstOrDefault(p=>p.Id == ci.ProductId) };
+                    nOrder.OrderProducts.Add(nOrderProd);
+                });
+                usr.Orders.Add(nOrder);
+                ctx.SaveChanges();
+            }
         }
     }
 }

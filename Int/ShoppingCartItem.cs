@@ -16,11 +16,13 @@ namespace Int
             this.subTotal = subTotal;
         }
 
+        private int productId;
         private string name;
         private decimal price;
         private int quantity;
         private decimal subTotal;
 
+        public int ProductId { get { return productId; } set { productId = value; } }
         public string Name { get { return name; } set { name = value; } }
         public decimal Price { get { return price; } set { price = value; } }
         public string PriceAsString { get { return price.ToString("C"); } }

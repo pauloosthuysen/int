@@ -52,7 +52,10 @@
                 </Columns>
             </asp:GridView>
             <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
-            <asp:Button ID="btnCheckout" runat="server" Text="Checkout" />
+            <asp:Button ID="btnClearCart" runat="server" Text="Clear Cart" 
+        onclick="btnClearCart_Click" />
+            <asp:Button ID="btnCheckout" runat="server" Text="Checkout" 
+        onclick="btnCheckout_Click" />
     <% } %>
     <hr />
     <asp:Button ID="btnLogout" runat="server" Text="Logout" 

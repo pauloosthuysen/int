@@ -8,8 +8,9 @@ namespace Int
     public class ShoppingCartItem
     {
 
-        public ShoppingCartItem(string name, decimal price, int quantity, decimal subTotal)
+        public ShoppingCartItem(int id, string name, decimal price, int quantity, decimal subTotal)
         {
+            this.productId = id;
             this.name = name;
             this.price = price;
             this.quantity = quantity;

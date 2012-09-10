@@ -64,6 +64,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Web References\IntWebService\IntWebService.disco" />
+    <Content Include="ViewInvoiceAfterOrder.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -118,6 +119,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ShoppingCartItem.cs" />
+    <Compile Include="ViewInvoiceAfterOrder.aspx.cs">
+      <DependentUpon>ViewInvoiceAfterOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewInvoiceAfterOrder.aspx.designer.cs">
+      <DependentUpon>ViewInvoiceAfterOrder.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Web References\IntWebService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

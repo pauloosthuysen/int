@@ -62,7 +62,7 @@ namespace Int
                 int pQu = Int32.Parse(s.Split('|')[1]);
                 Product prod = ws.GetProduct(pId);
                 decimal subTotal = (prod.Price * pQu);
-                cartItems.Add(new ShoppingCartItem(prod.Name, prod.Price, pQu, subTotal) { ProductId = prod.Id });
+                cartItems.Add(new ShoppingCartItem(prod.Id, prod.Name, prod.Price, pQu, subTotal));
             }
             return cartItems;
         }
@@ -124,7 +124,7 @@ namespace Int
         {
             //clear session vars
             Session["isLoggedIn"] = null;
-            Session["Cart"] = null;
+            ClearCart();
             Session["loggedInUser"] = null;
 
             //redirect
@@ -132,6 +132,11 @@ namespace Int
         }
 
         protected void btnClearCart_Click(object sender, EventArgs e)
+        {
+            ClearCart();
+        }
+
+        private void ClearCart()
         {
             Session["Cart"] = null;
         }
@@ -145,13 +150,33 @@ namespace Int
                 Int.User usr = ctx.Users.FirstOrDefault(u => u.Id == loggedInUser.Id);
                 Invoice nInv = new Invoice() { Date = now, IsPaid = false };
                 Order nOrder = new Order() { Date = now, Invoice = nInv, Discount = 0 };
+                decimal totalAmount = 0;
                 GetCartItems().ForEach(ci =>
                 {
                     OrderProduct nOrderProd = new OrderProduct() { Quantity = ci.Quantity, Product = ctx.Products.FirstOrDefault(p=>p.Id == ci.ProductId) };
                     nOrder.OrderProducts.Add(nOrderProd);
+                    totalAmount += ci.Price * ci.Quantity;
                 });
+
+                //calulate discount
+                if (totalAmount >= 50)
+                {
+                    nOrder.Discount += 10;
+                }
+                if(totalAmount >= 75)
+                {
+                    nOrder.Discount += 10;
+                }
+                if (totalAmount >= 100)
+                {
+                    nOrder.Discount += 10;
+                }
+
+                //save order and redirect
                 usr.Orders.Add(nOrder);
                 ctx.SaveChanges();
+                ClearCart();
+                Response.Redirect("ViewInvoiceAfterOrder.aspx?id=" + nOrder.Id);
             }
         }
     }

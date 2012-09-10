@@ -40,5 +40,29 @@ namespace Int
         {
             return DataAccess.GetProduct(productId);
         }
+
+        [WebMethod]
+        public Order GetOrder(int orderId)
+        {
+            return DataAccess.GetOrder(orderId);
+        }
+
+        [WebMethod]
+        public Invoice GetOrderInvoice(int orderId)
+        {
+            return DataAccess.GetOrderInvoice(orderId);
+        }
+
+        [WebMethod]
+        public List<Product> GetOrderProducts(int orderId)
+        {
+            return DataAccess.GetOrderProducts(orderId);
+        }
+
+        [WebMethod]
+        public int GetOrderProductQuantity(int orderId, int productId)
+        {
+            return DataAccess.GetOrderProductQuantity(orderId, productId);
+        }
     }
 }

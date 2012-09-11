@@ -1,0 +1,14 @@
+﻿body 
+{
+    background-color: #ccc;
+}
+
+div#content
+{
+    background-color: #fff;
+    width: 980px;
+    left: 50%;
+    margin-left: -490px;
+    position: absolute;
+    padding: 20px;
+}

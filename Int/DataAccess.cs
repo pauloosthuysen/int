@@ -82,5 +82,41 @@ namespace Int
                 return cont.OrderProducts.Where(op => op.Product.Id == productId && op.Order.Id == orderId).Select(op => op.Quantity).FirstOrDefault();
             }
         }
+
+        public static void AddOrder(int userId, List<CartItem> cartItems)
+        {
+            DataAccessContainer da = new DataAccessContainer();
+
+            DateTime now = DateTime.Now;
+
+            User usr = da.Users.FirstOrDefault(it=>it.Id == userId);
+            Invoice nInvoice = new Invoice() { Date = now, IsPaid = false };
+            Order nOrder = new Order() { Date = now, Discount = 0, Invoice = nInvoice};
+            decimal tot = 0;
+            cartItems.ForEach(it =>
+            {
+                Product p = da.Products.FirstOrDefault(pr=>pr.Id == it.Id);
+                OrderProduct op = new OrderProduct() { Quantity = it.Quantity, Product = p, Order = nOrder };
+                tot += p.Price * it.Quantity;
+            });
+
+            //calc Discount
+            decimal discount = 0;
+            if (tot >= 50)
+            {
+                discount += 10;
+            }
+            if(tot >= 75){
+                discount += 10;
+            }
+            if (tot >= 100)
+            {
+                discount += 10;
+            }
+            nOrder.Discount = discount;
+
+            usr.Orders.Add(nOrder);
+            da.SaveChanges();
+        }
     }
 }
